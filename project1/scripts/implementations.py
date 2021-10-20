@@ -81,3 +81,48 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         w = w - gamma * (grad + 2 * lambda_ * w)
 
     return w, loss
+
+def least_squares_GD(y, tx, w_initial, max_iters, gamma):
+    """Compute Least Squares with Gradient Descent"""
+    """INPUTS : vector with data (tx, y), the initial w, the maximum number of iterations and the learning rate gamma"""
+    """OUTPUTS : the weights w of the model and the loss"""
+    N = len(y)
+    w = w_initial
+    for i in range(max_iters) :
+        mse_grad_loss = (-1/N)*np.matmul(tx.T, (y-np.dot(tx,w)))
+        w = w - gamma*mse_grad_loss
+    loss = (1/(2*N))*np.square(y-np.dot(tx,w))
+    return (w, loss)
+
+def least_squares_SGD(y, tx, w_initial, max_iters, gamma):
+    """Compute Least Squares with Stochastic Gradient Descent"""
+    """INPUTS : vector with data (tx, y), the initial w, the maximum number of iterations and the learning rate gamma"""
+    """OUTPUTS : the weights w of the model """
+    N = len(y)
+    w = w_initial
+    i=0
+    while i<max_iters :
+        for j in range(N) : 
+            mse_grad_loss = np.dot(tx[j].T, (y[j]-np.dot(tx[j], w)))
+            w = w - gamma*mse_grad_loss
+        i+=1
+    loss = (1/(2*N))*np.square(y-np.dot(tx,w))
+    return (w, loss)
+
+def least_squares(y, tx):
+    """Compute Least Squares with normal equations"""
+    """INPUTS : vector with data (tx, y)"""
+    """OUTPUTS : the weights w of the model """
+    w =  np.matmul(np.linalg.solve(np.matmul((tx.T), tx),(tx.T)), y)
+    N = len(y)
+    loss = (1/(2*N))*np.square(y-np.dot(tx,w))
+    return (w, loss)
+
+def ridge_regression(y, tx, lambda_): 
+    """Compute Ridge Regresssion with normal equations"""
+    """INPUTS : vector with data (tx, y) and penalty parameter lambda_"""
+    """OUTPUTS : the weights w of the model """
+    N = len(y)
+    w =  np.matmul(np.linalg.solve((np.matmul((tx.T), tx)+lambda_*2*N*np.identity(tx.shape[1])),(tx.T)), y)
+    loss = (1/(2*N))*np.square(y-np.dot(tx,w)) + lambda_*np.sum(np.square(w))
+    return (w, loss)
