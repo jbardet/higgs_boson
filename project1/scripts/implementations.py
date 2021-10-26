@@ -9,13 +9,12 @@ def gradient_logistic(tx, y, w):
     """OUTPUTS : the gradient"""
     return np.matmul(tx.T, (sigmoid(np.matmul(tx, w)) - y)) 
 
-## Not sure about this one
+## Not sure
 def loss_logistic(tx, y, w):
-    """Computes the loss for Logistic Regression (binary cross entropy)"""
+    """Computes the loss for Logistic Regression"""
     """INPUTS : vector with data (tx, y), the weights w"""
     """OUTPUTS : the loss"""
-    epsilon = 1e-5
-    return - 1 / y.shape[0] * np.sum(y * np.log(sigmoid(np.matmul(tx, w)) + epsilon) + (1 - y) * np.log(1 - sigmoid(np.matmul(tx, w)) + epsilon))
+    return - np.dot(y, np.matmul(tx, w)) + np.sum(np.log(1 + np.exp(np.matmul(tx, w))))
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """Computes Logistic Regression with Gradient Descent"""
@@ -27,9 +26,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     # We add the offset term w0
     w0 = np.ones((y.shape[0], 1))
     initial_w = np.zeros(initial_w.shape[0] + 1)
-    2
-    # We add to the data a column of 1 because of the added offset w0
-    tx = np.hstack((tx, w0))
+    tx = np.hstack((tx, w0)) # We add to the data a column of 1 because of the added offset w0
 
     w = initial_w
     loss = 0
@@ -49,9 +46,10 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """OUTPUTS : the weights w of the model and the loss"""
     
     y[y < 0] = 0
-    w0 = np.ones(tx.shape[0])
+
+    w0 = np.ones((y.shape[0], 1))
     initial_w = np.zeros(initial_w.shape[0] + 1)
-    tx = np.hstack(tx, w0)
+    tx = np.hstack((tx, w0))
 
     w = initial_w
     loss = 0

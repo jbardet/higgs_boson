@@ -40,7 +40,6 @@ def predict_labels_logistic(weights, data):
     w0 = np.ones((data.shape[0], 1))
     data = np.hstack((data, w0))
     y_pred = sigmoid(np.dot(data, weights))
-    print(y_pred)
     y_pred[np.where(y_pred <= 0.5)] = -1
     y_pred[np.where(y_pred > 0.5)] = 1
     
@@ -60,6 +59,11 @@ def create_csv_submission(ids, y_pred, name):
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
 
+
+def normalize(x_train, x_test):
+    centred_x = x_train - np.mean(x_train, axis=0)
+    normalized_x = centred_x / np.std(x_train, axis=0)
+    return normalized_x, (x_test - np.mean(x_train, axis=0)) / np.std(x_train,axis=0)
 
 def split_data(x, y, ratio, seed=101):
     """split the dataset based on the split ratio."""
