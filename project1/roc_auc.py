@@ -39,6 +39,8 @@ def predict_labels_log_thresh(weights, data, thresh):
 def predict_labels_thresh(weights, data, thresh):
     """Generates class predictions given weights, and a test data matrix"""
     y_pred = np.dot(data, weights)
+    #converting threshold from 0 to 1 into -1 to 1
+    thresh = -1 + ((1-(-1)) / (1-0)) * (thresh - 0)
     y_pred[np.where(y_pred <= thresh)] = -1
     y_pred[np.where(y_pred > thresh)] = 1
     
