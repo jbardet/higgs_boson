@@ -16,7 +16,7 @@ nb_samples, nb_features = np.shape(tX)
 
 # Data cleaning, removing features that have too much missing_data(more than 75%)
 # replacing missing data (-999) with the mean of the rest of the data
-def modify_missing_data(X,missing_data,threshold):
+def modify_missing_data(X,missing_data,threshold,train_X):
     nb_features = (np.shape(X))[1]
     indices_missingdata = []
     percentage_missingdata = np.zeros(nb_features)
@@ -34,8 +34,12 @@ def modify_missing_data(X,missing_data,threshold):
             indices_features.remove(i+1)
              # we keep these features but we replace missing data with the median(better for outliers) we can also use mean
         else:
-            median[i] = np.median(tX[:,i][tX[:,i] != missing_data])
-            tX[indices_missingdata[i],i] = median[i]
+            median[i] = np.median(train_X[:,i][train_X[:,i] != missing_data])
+            # X can be either train or test data, in both cases we repalce missing data with median of the train data
+            X[indices_missingdata[i],i] = median[i]
+            #median[i] = np.median(X[:,i][X[:,i] != missing_data])
+            #X[indices_missingdata[i],i] = median[i]
+
     # delete col of bad features
     new_X = np.delete(X,indices_badfeatures, 1)
     return new_X,indices_badfeatures,indices_features
