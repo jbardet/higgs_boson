@@ -9,12 +9,12 @@ def gradient_logistic(tx, y, w):
     """OUTPUTS : the gradient"""
     return np.matmul(tx.T, (sigmoid(np.matmul(tx, w)) - y)) 
 
-## Not sure
 def loss_logistic(tx, y, w):
     """Computes the loss for Logistic Regression"""
     """INPUTS : vector with data (tx, y), the weights w"""
     """OUTPUTS : the loss"""
-    return - np.dot(y, np.matmul(tx, w)) + np.sum(np.log(1 + np.exp(np.matmul(tx, w))))
+    epsilon = 1e-5
+    return - (np.dot(y, np.log(sigmoid(np.matmul(tx, w)) + epsilon)) + np.dot((1 - y), np.log(1 - sigmoid(np.matmul(tx, w)) + epsilon)))
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """Computes Logistic Regression with Gradient Descent"""
