@@ -7,7 +7,9 @@ def gradient_logistic(tx, y, w):
     """Computes the gradient for Logistic Regression"""
     """INPUTS : vector with data (tx, y), the weights w"""
     """OUTPUTS : the gradient"""
-    return np.matmul(tx.T, (sigmoid(np.matmul(tx, w)) - y)) 
+    pred = sigmoid(tx.dot(w))
+    grad = tx.T.dot(pred - y)
+    return grad
 
 def loss_logistic(tx, y, w):
     """Computes the loss for Logistic Regression"""
@@ -15,7 +17,9 @@ def loss_logistic(tx, y, w):
     """OUTPUTS : the loss"""
     y[y < 0] = 0
     epsilon = 1e-5
-    return - (np.dot(y, np.log(sigmoid(np.matmul(tx, w)) + epsilon)) + np.dot((1 - y), np.log(1 - sigmoid(np.matmul(tx, w)) + epsilon)))
+    pred = sigmoid(tx.dot(w))
+    loss = y.T.dot(np.log(pred + epsilon)) + (1 - y).T.dot(np.log(1 - pred + epsilon))
+    return np.squeeze(- loss)
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """Computes Logistic Regression with Gradient Descent"""
@@ -58,9 +62,9 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
 
         grad = gradient_logistic(tx, y, w)
-        loss = loss_logistic(tx, y, w) + (lambda_ / 2) * np.sum(np.square(w)) # L2 regularization
+        loss = loss_logistic(tx, y, w) + lambda_ * np.squeeze(w.T.dot(w)) # L2 regularization
 
-        w = w - gamma * (grad + lambda_ * w)
+        w = w - gamma * (grad + 2 * lambda_ * w)
 
     return w, loss
 
