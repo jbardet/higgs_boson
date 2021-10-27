@@ -1,38 +1,48 @@
 from operator import truediv
 import numpy as np
 from scripts.proj1_helpers import *
-from scripts.implementations import logistic_regression, least_squares_GD, least_squares
+from scripts.implementations import ridge_regression
 
 DATA_TRAIN_PATH = 'data/train.csv'
-y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
+y, tx, ids = load_csv_data(DATA_TRAIN_PATH)
 
 DATA_TEST_PATH = 'data/test.csv'
-#_, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
+_, tx_test, ids_test = load_csv_data(DATA_TEST_PATH)
 
 OUTPUT_PATH = 'outputs/test.txt'
 
-x_train, x_test, y_train, y_test = split_data(tX, y, 0.7)
+x_train, x_test, y_train, y_test = split_data(tx, y, 0.7)
 
-def normalize(x_train, x_test):
-    centred_x = x_train - np.mean(x_train, axis=0)
-    normalized_x = centred_x / np.std(x_train, axis=0)
-    return normalized_x, (x_test - np.mean(x_train, axis=0)) / np.std(x_train,axis=0)
-
-x_train, x_test = normalize(x_train, x_test)
-
-initial_w = np.zeros(tX.shape[1])
+initial_w = np.zeros(tx.shape[1])
 max_iters = 100
-gamma = 1e-2
+lambda_ = 1e-4
 
-## Test on some small data
-weights, loss = logistic_regression(y_train, x_train, initial_w, 100, gamma)
-#weights, loss = least_squares(y_train, x_train)
+x_train_normalized, x_test_normalized = normalize(x_train, x_test)
 
-print(loss)
-y_pred = predict_labels_logistic(weights, x_test)
-print(y_pred)
+weights, loss = ridge_regression(y_train, x_train_normalized, lambda_)
+y_pred = predict_labels(weights, x_test_normalized)
 
 accuracy = np.sum(y_pred==y_test) / y_pred.shape[0]
-print(accuracy)
+print("Normalized only ", loss, accuracy)
+
+x_train_cleaned, _, _ = modify_missing_data(x_train, -999, 0.9, x_train)
+x_test_cleaned, _, _ = modify_missing_data(x_test, -999, 0.9, x_train)
+
+x_train_cleaned_normalized, x_test_cleaned_normalized = normalize(x_train_cleaned, x_test_cleaned)
+
+degree = 11
+
+x_train_poly = build_poly(x_train_cleaned_normalized, degree)
+x_test_poly = build_poly(x_test_cleaned_normalized, degree)
+
+print("cleaned shape ", x_train_cleaned_normalized.shape)
+
+## Test on some small data
+weights, loss = ridge_regression(y_train, x_train_poly, lambda_)
+y_pred = predict_labels(weights, x_test_poly)
+
+accuracy = np.sum(y_pred==y_test) / y_pred.shape[0]
+print("Normalized + cleaned", loss, accuracy)
+
 
 #create_csv_submission(ids_test, y_pred, OUTPUT_PATH)

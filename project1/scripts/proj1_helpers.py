@@ -97,3 +97,49 @@ def compute_mse(y, tx, w):
     e = y - tx.dot(w)
     mse = e.dot(e) / (2 * len(e))
     return mse
+
+def modify_missing_data(X,missing_data,threshold,train_X):
+    nb_features = (np.shape(X))[1]
+    nb_samples = X.shape[0]
+    indices_missingdata = []
+    percentage_missingdata = np.zeros(nb_features)
+    indices_features = list(range(1, nb_features))
+    indices_badfeatures = []
+    median = np.zeros(nb_features)
+    #threshold_removing_feature = 0.70
+    for i in range(nb_features):
+        indices_missingdata.append(np.where(X[:,i] == missing_data))
+        percentage_missingdata[i] = np.shape(indices_missingdata[i])[1]/nb_samples
+        #print(percentage_missingdata[i])# we can see that a lot of features have a percentage of 0.709
+        # we will remove the features that have a percentage of missing data more than 70%
+        if percentage_missingdata[i]> threshold:
+            indices_badfeatures.append(i)
+            indices_features.remove(i+1)
+             # we keep these features but we replace missing data with the median(better for outliers) we can also use mean
+        else:
+            median[i] = np.median(train_X[:,i][train_X[:,i] != missing_data])
+            # X can be either train or test data, in both cases we repalce missing data with median of the train data
+            X[indices_missingdata[i],i] = median[i]
+            #median[i] = np.median(X[:,i][X[:,i] != missing_data])
+            #X[indices_missingdata[i],i] = median[i]
+
+    # delete col of bad features
+    new_X = np.delete(X,indices_badfeatures, 1)
+    return new_X,indices_badfeatures,indices_features
+
+def build_poly(tx, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    
+    new_tx = []
+    for i in range(tx.shape[1]):
+        poly = np.ones((len(tx[:, i]), 1))
+
+        for deg in range(1, degree+1):
+            poly = np.c_[poly, np.power(tx[:, i], deg)]
+
+        if i == 0:
+            new_tx = poly[:,1:]
+        else:
+            new_tx = np.c_[new_tx, poly]
+
+    return new_tx
