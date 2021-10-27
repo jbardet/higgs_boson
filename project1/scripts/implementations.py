@@ -57,9 +57,9 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
 
         grad = gradient_logistic(tx, y, w)
-        loss = loss_logistic(tx, y, w) + (lambda_ / 2)* np.sum(np.square(w)) # L2 regularization
+        loss = loss_logistic(tx, y, w) + lambda_ * np.sum(np.square(w)) # L2 regularization
 
-        w = w - gamma * (grad + lambda_ * w)
+        w = w - gamma * (grad + 2 * lambda_ * w)
 
     return w, loss
 
