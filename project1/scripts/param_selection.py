@@ -58,7 +58,7 @@ def gamma_grid_search(y, tx, gammas, k_fold, seed=101):
 def lambda_grid_search(y, tx, lambdas, k_fold, seed=101):
 
     k_indices = build_k_indices(y, k_fold, seed)
-    gamma = 1e-2 #Change to best gamma found before
+    gamma = 1e-5 #Change to best gamma found before
 
     loss_logreg_reg = []
     loss_ridge = []
