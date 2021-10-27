@@ -13,6 +13,7 @@ def loss_logistic(tx, y, w):
     """Computes the loss for Logistic Regression"""
     """INPUTS : vector with data (tx, y), the weights w"""
     """OUTPUTS : the loss"""
+    y[y < 0] = 0
     epsilon = 1e-5
     return - (np.dot(y, np.log(sigmoid(np.matmul(tx, w)) + epsilon)) + np.dot((1 - y), np.log(1 - sigmoid(np.matmul(tx, w)) + epsilon)))
 
