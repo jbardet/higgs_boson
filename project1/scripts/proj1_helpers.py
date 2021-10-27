@@ -23,6 +23,18 @@ def load_csv_data(data_path, sub_sample=False):
 
     return yb, input_data, ids
 
+def one_hot(data) : 
+    cat = data[:,22].astype(int)
+    num_cat = np.unique(data[:,22])
+    print(f'Categorical data : {num_cat}')
+    #take column 22 (where it is categorical) and add 4 one-hot columns
+    #rows_added = np.array()
+    shape = (cat.size, len(num_cat))
+    one_hot = np.zeros(shape)
+    one_hot[np.arange(cat.size),cat] = 1
+    data = np.delete(data, 22, axis=1)
+    data = np.concatenate((data, one_hot), axis=1)
+    return data
 
 def predict_labels(weights, data):
     """Generates class predictions given weights, and a test data matrix"""
