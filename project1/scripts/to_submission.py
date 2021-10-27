@@ -23,8 +23,11 @@ degree = 11
 x_train_poly = build_poly(x_train_cleaned_normalized, degree)
 x_test_poly = build_poly(x_test_cleaned_normalized, degree)
 
-weights, loss = ridge_regression(y, x_train_poly, lambda_)
-y_pred = predict_labels(weights, x_test_poly)
+x_train_onehot = one_hot(x_train_poly)
+x_test_onehot = one_hot(x_test_poly)
+
+weights, loss = ridge_regression(y, x_train_onehot, lambda_)
+y_pred = predict_labels(weights, x_test_onehot)
 
 
 create_csv_submission(ids_test, y_pred, OUTPUT_PATH)
