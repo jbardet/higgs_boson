@@ -39,11 +39,11 @@ def gamma_grid_search(y, tx, gammas, k_fold, seed=101):
             loss_logreg_tmp.append([loss_train, loss_test])
 
             w, loss_train = least_squares_GD(y_train, x_train, initial_w, 50, gamma)
-            loss_test = np.sqrt(2 * compute_mse(y_test, x_test, w)) #rmse loss
+            loss_test = compute_mse(y_test, x_test, w) #mse loss
             loss_ls_GD_tmp.append([loss_train, loss_test])
 
             w, loss_train = least_squares_SGD(y_train, x_train, initial_w, 50, gamma)
-            loss_test = np.sqrt(2 * compute_mse(y_test, x_test, w)) #rmse loss
+            loss_test = compute_mse(y_test, x_test, w) #mse loss
             loss_ls_SGD_tmp.append([loss_train, loss_test])
 
         loss_logreg.append(np.mean(loss_logreg_tmp, axis=0))
@@ -91,7 +91,7 @@ def lambda_grid_search(y, tx, lambdas, k_fold, seed=101):
             loss_logreg_reg_tmp.append([loss_train, loss_test])
 
             w, loss_train = ridge_regression(y_train, x_train, lambda_)
-            loss_test = np.sqrt(2 * compute_mse(y_test, x_test, w)) #rmse loss
+            loss_test = compute_mse(y_test, x_test, w) #mse loss
             loss_ridge_tmp.append([loss_train, loss_test])
 
         loss_logreg_reg.append(np.mean(loss_logreg_reg_tmp, axis=0))
