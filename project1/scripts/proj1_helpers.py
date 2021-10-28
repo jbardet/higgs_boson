@@ -14,7 +14,7 @@ def load_csv_data(data_path, sub_sample=False):
     # convert class labels from strings to binary (-1,1)
     yb = np.ones(len(y))
     yb[np.where(y=='b')] = -1
-    
+
     # sub-sample
     if sub_sample:
         yb = yb[::50]
@@ -23,10 +23,10 @@ def load_csv_data(data_path, sub_sample=False):
 
     return yb, input_data, ids
 
-def one_hot(data) : 
+def one_hot(data) :
     cat = data[:,22].astype(int)
     num_cat = np.unique(data[:,22])
-    print(f'Categorical data : {num_cat}')
+    #print(f'Categorical data : {num_cat}')
     #take column 22 (where it is categorical) and add 4 one-hot columns
     #rows_added = np.array()
     shape = (cat.size, len(num_cat))
@@ -41,12 +41,12 @@ def predict_labels(weights, data):
     y_pred = np.dot(data, weights)
     y_pred[np.where(y_pred <= 0)] = -1
     y_pred[np.where(y_pred > 0)] = 1
-    
+
     return y_pred
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
-    
+
 def predict_labels_logistic(weights, data):
     """Generates class predictions given weights, and a test data matrix"""
     w0 = np.ones((data.shape[0], 1))
@@ -54,7 +54,7 @@ def predict_labels_logistic(weights, data):
     y_pred = sigmoid(np.dot(data, weights))
     y_pred[np.where(y_pred <= 0.5)] = -1
     y_pred[np.where(y_pred > 0.5)] = 1
-    
+
     return y_pred
 
 def create_csv_submission(ids, y_pred, name):
@@ -176,17 +176,23 @@ def modify_missing_data(X,missing_data,threshold,train_X):
         percentage_missingdata[i] = np.shape(indices_missingdata[i])[1]/nb_samples
         #print(percentage_missingdata[i])# we can see that a lot of features have a percentage of 0.709
         # we will remove the features that have a percentage of missing data more than 70%
+        median[i] = np.median(train_X[:,i][train_X[:,i] != missing_data])
         if percentage_missingdata[i]> threshold:
             indices_badfeatures.append(i)
             indices_features.remove(i+1)
              # we keep these features but we replace missing data with the median(better for outliers) we can also use mean
         else:
-            median[i] = np.median(train_X[:,i][train_X[:,i] != missing_data])
             # X can be either train or test data, in both cases we repalce missing data with median of the train data
             X[indices_missingdata[i],i] = median[i]
             #median[i] = np.median(X[:,i][X[:,i] != missing_data])
             #X[indices_missingdata[i],i] = median[i]
-
+        #print(np.abs(X[:,i]))
+        #print(np.std(train_X[:,i],axis=0))
+        #print(X[np.where(np.abs(X[:,i])>3*np.std(train_X[:,i],axis=0))])
+        #print(X[np.where(np.abs(X[:,i])>3*np.std(train_X[:,i],axis=0)), i])
+        if i != 22 :
+            X[np.where(np.abs(X[:,i])>3*np.std(train_X[:,i],axis=0)), i] = median[i]
+        #indices = np.where(np.abs(train_X)>3*)
     # delete col of bad features
     new_X = np.delete(X,indices_badfeatures, 1)
     return new_X,indices_badfeatures,indices_features
