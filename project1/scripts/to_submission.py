@@ -1,4 +1,3 @@
-import numpy as np
 from proj1_helpers import *
 from implementations import ridge_regression
 
@@ -16,18 +15,18 @@ lambda_ = 1e-4
 x_train_cleaned, _, _ = modify_missing_data(tx, -999, 0.9, tx)
 x_test_cleaned, _, _ = modify_missing_data(tx_test, -999, 0.9, tx)
 
-x_train_cleaned_normalized, x_test_cleaned_normalized = normalize(x_train_cleaned, x_test_cleaned)
+x_train_cleaned_normalized, x_test_cleaned_normalized = standardize_cat(x_train_cleaned, x_test_cleaned)
+
+x_train_onehot = one_hot(x_train_cleaned_normalized)
+x_test_onehot = one_hot(x_test_cleaned_normalized)
 
 degree = 11
 
-x_train_poly = build_poly(x_train_cleaned_normalized, degree)
-x_test_poly = build_poly(x_test_cleaned_normalized, degree)
+x_train_poly = build_poly(x_train_onehot, degree)
+x_test_poly = build_poly(x_test_onehot, degree)
 
-x_train_onehot = one_hot(x_train_poly)
-x_test_onehot = one_hot(x_test_poly)
-
-weights, loss = ridge_regression(y, x_train_onehot, lambda_)
-y_pred = predict_labels(weights, x_test_onehot)
+weights, loss = ridge_regression(y, x_train_poly, lambda_)
+y_pred = predict_labels(weights, x_test_poly)
 
 
 create_csv_submission(ids_test, y_pred, OUTPUT_PATH)

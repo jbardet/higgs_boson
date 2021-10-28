@@ -186,13 +186,8 @@ def modify_missing_data(X,missing_data,threshold,train_X):
             X[indices_missingdata[i],i] = median[i]
             #median[i] = np.median(X[:,i][X[:,i] != missing_data])
             #X[indices_missingdata[i],i] = median[i]
-        #print(np.abs(X[:,i]))
-        #print(np.std(train_X[:,i],axis=0))
-        #print(X[np.where(np.abs(X[:,i])>3*np.std(train_X[:,i],axis=0))])
-        #print(X[np.where(np.abs(X[:,i])>3*np.std(train_X[:,i],axis=0)), i])
         if i != 22 :
-            X[np.where(np.abs(X[:,i])>3*np.std(train_X[:,i],axis=0)), i] = median[i]
-        #indices = np.where(np.abs(train_X)>3*)
+            X[np.where(np.abs(X[:,i])>12*np.std(train_X[:,i],axis=0)), i] = median[i]
     # delete col of bad features
     new_X = np.delete(X,indices_badfeatures, 1)
     return new_X,indices_badfeatures,indices_features
