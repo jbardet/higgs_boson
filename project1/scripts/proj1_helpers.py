@@ -26,7 +26,7 @@ def load_csv_data(data_path, sub_sample=False):
 def one_hot(data) : 
     cat = data[:,22].astype(int)
     num_cat = np.unique(data[:,22])
-    print(f'Categorical data : {num_cat}')
+    #print(f'Categorical data : {num_cat}')
     #take column 22 (where it is categorical) and add 4 one-hot columns
     #rows_added = np.array()
     shape = (cat.size, len(num_cat))
