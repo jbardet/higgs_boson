@@ -89,7 +89,7 @@ def least_squares_SGD(y, tx, w_initial, max_iters, gamma):
     i=0
     while i<max_iters :
         j = np.random.randint(0,N)
-        mse_grad_loss = np.dot(tx[j].T, (y[j]-np.dot(tx[j], w)))
+        mse_grad_loss = - np.dot(tx[j].T, (y[j]-np.dot(tx[j], w)))
         w = w - gamma*mse_grad_loss
         i+=1
     loss = (1/(2*N))*np.sum(np.square(y-np.dot(tx,w)))
