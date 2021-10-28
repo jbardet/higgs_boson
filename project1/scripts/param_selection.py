@@ -27,7 +27,7 @@ def gamma_grid_search(y, tx, gammas, k_fold, seed=101):
             y_train = y[train_indice]
             x_test = tx[test_indice]
             x_train = tx[train_indice]
-            x_train, x_test = normalize(x_train, x_test)
+            x_train, x_test = normalize_all(x_train, x_test)
             initial_w = np.zeros(x_train.shape[1])
 
             # for log reg add offset term w0
@@ -79,7 +79,7 @@ def lambda_grid_search(y, tx, lambdas, k_fold, seed=101):
             y_train = y[train_indice]
             x_test = tx[test_indice]
             x_train = tx[train_indice]
-            x_train, x_test = normalize(x_train, x_test)
+            x_train, x_test = normalize_all(x_train, x_test)
             initial_w = np.zeros(x_train.shape[1])
 
             # for log reg
@@ -119,25 +119,25 @@ def compare_models(y, tx, gammas, lambdas, k_fold, seed=101):
         y_train = y[train_indice]
         x_test = tx[test_indice]
         x_train = tx[train_indice]
-        x_train, x_test = normalize(x_train, x_test)
+        x_train, x_test = normalize_all(x_train, x_test)
         initial_w = np.zeros(x_train.shape[1])
 
-        w, _ = logistic_regression(y_train, x_train, initial_w, 50, gammas[0])
+        w, _ = logistic_regression(y_train, x_train, initial_w, 100, gammas[0])
         y_test_pred = predict_labels_logistic(w, x_test)
         acc_test = np.sum(y_test_pred==y_test) / y_test_pred.shape[0]
         acc_logreg.append(acc_test)
 
-        w, _ = reg_logistic_regression(y_train, x_train, lambdas[0], initial_w, 50, gammas[1])
+        w, _ = reg_logistic_regression(y_train, x_train, lambdas[0], initial_w, 100, gammas[1])
         y_test_pred = predict_labels_logistic(w, x_test)
         acc_test = np.sum(y_test_pred==y_test) / y_test_pred.shape[0]
         acc_logreg_reg.append(acc_test)
 
-        w, _ = least_squares_GD(y_train, x_train, initial_w, 50, gammas[2])
+        w, _ = least_squares_GD(y_train, x_train, initial_w, 100, gammas[2])
         y_test_pred = predict_labels(w, x_test)
         acc_test = np.sum(y_test_pred==y_test) / y_test_pred.shape[0]
         acc_ls_GD.append(acc_test)
 
-        w, _ = least_squares_SGD(y_train, x_train, initial_w, 50, gammas[3])
+        w, _ = least_squares_SGD(y_train, x_train, initial_w, 150, gammas[3])
         y_test_pred = predict_labels(w, x_test)
         acc_test = np.sum(y_test_pred==y_test) / y_test_pred.shape[0]
         acc_ls_SGD.append(acc_test)

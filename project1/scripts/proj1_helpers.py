@@ -24,15 +24,15 @@ def load_csv_data(data_path, sub_sample=False):
     return yb, input_data, ids
 
 def one_hot(data) : 
-    cat = data[:,-1].astype(int)
-    num_cat = np.unique(data[:,-1])
+    cat = data[:,22].astype(int)
+    num_cat = np.unique(data[:,22])
     print(f'Categorical data : {num_cat}')
     #take column 22 (where it is categorical) and add 4 one-hot columns
     #rows_added = np.array()
     shape = (cat.size, len(num_cat))
     one_hot = np.zeros(shape)
     one_hot[np.arange(cat.size),cat] = 1
-    data = np.delete(data, data.shape[1]-1, axis=1)
+    data = np.delete(data, 22, axis=1)
     data = np.concatenate((data, one_hot), axis=1)
     return data
 
@@ -71,20 +71,36 @@ def create_csv_submission(ids, y_pred, name):
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
 
+def normalize_all(x_train, x_test):
 
-def normalize(x_train, x_test, cat=22):
+    centred_x = x_train - np.mean(x_train, axis=0)
+    normalized_x = centred_x / np.std(x_train, axis=0)
+    normalized_x_test = (x_test - np.mean(x_train, axis=0)) / np.std(x_train,axis=0)
+    return normalized_x, normalized_x_test
 
-    x_train_continuous = np.delete(x_train, cat, axis=1)
-    x_test_continuous = np.delete(x_test, cat, axis=1)
+def normalize_cat(x_train, x_test, cat=22):
 
-    centred_x = x_train_continuous - np.mean(x_train_continuous, axis=0)
-    normalized_x = centred_x / np.std(x_train_continuous, axis=0)
+    x_train_left = x_train[:, :cat]
+    x_train_cat = x_train[:, cat]
+    x_train_right = x_train[:, (cat+1):]
 
-    normalized_x = np.concatenate((normalized_x, np.expand_dims(x_train[:, cat], 1)), axis=1)
-    normalized_x_test = (x_test_continuous - np.mean(x_train_continuous, axis=0)) / np.std(x_train_continuous,axis=0)
-    normalized_x_test = np.concatenate((normalized_x_test, np.expand_dims(x_test[:, cat], 1)), axis=1)
+    x_train_left_n = (x_train_left - np.mean(x_train_left, axis=0)) / np.std(x_train_left, axis=0)
+    x_train_right_n = (x_train_right - np.mean(x_train_right, axis=0)) / np.std(x_train_right, axis=0)
 
-    return normalized_x, normalized_x_test 
+    x_train_n = np.concatenate((x_train_left_n, np.expand_dims(x_train_cat, 1), x_train_right_n), axis=1)
+
+    print(x_train.shape, x_train_n.shape)
+
+    x_test_left = x_test[:, :cat]
+    x_test_cat = x_test[:, cat]
+    x_test_right = x_test[:, (cat+1):]
+
+    x_test_left_n = (x_test_left - np.mean(x_train_left, axis=0)) / np.std(x_train_left, axis=0)
+    x_test_right_n = (x_test_right - np.mean(x_train_right, axis=0)) / np.std(x_train_right, axis=0)
+
+    x_test_n = np.concatenate((x_test_left_n, np.expand_dims(x_test_cat, 1), x_test_right_n), axis=1)
+
+    return x_train_n, x_test_n 
 
 def split_data(x, y, ratio, seed=101):
     """split the dataset based on the split ratio."""
@@ -150,18 +166,20 @@ def modify_missing_data(X,missing_data,threshold,train_X):
 
 def build_poly(tx, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
-    
     new_tx = np.zeros((len(tx[:, 0]), 1))
-    for i in range(tx.shape[1]-1):
+    for i in range(tx.shape[1]):
 
-        poly = np.ones((len(tx[:, i]), 1))
+        if i <= tx.shape[1]-5:
+            poly = np.ones((len(tx[:, i]), 1))
 
-        for deg in range(1, degree+1):
-            poly = np.c_[poly, np.power(tx[:, i], deg)]
+            for deg in range(1, degree+1):
+                poly = np.c_[poly, np.power(tx[:, i], deg)]
 
-        new_tx = np.c_[new_tx, poly[:, 1:]] #Don't add the 1's
+            new_tx = np.c_[new_tx, poly[:, 1:]] #Don't add the 1's
+        else:
+            print(tx[:3, i])
+            new_tx = np.c_[new_tx, tx[:, i]]
 
     new_tx =  np.delete(new_tx, 0, axis=1)
-    new_tx = np.c_[new_tx, tx[:, -1]]
 
     return new_tx
