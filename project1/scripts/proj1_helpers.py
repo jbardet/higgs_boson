@@ -71,14 +71,14 @@ def create_csv_submission(ids, y_pred, name):
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
 
-def normalize_all(x_train, x_test):
+def standardize_all(x_train, x_test):
 
     centred_x = x_train - np.mean(x_train, axis=0)
     normalized_x = centred_x / np.std(x_train, axis=0)
     normalized_x_test = (x_test - np.mean(x_train, axis=0)) / np.std(x_train,axis=0)
     return normalized_x, normalized_x_test
 
-def normalize_cat(x_train, x_test, cat=22):
+def standardize_cat(x_train, x_test, cat=22):
 
     x_train_left = x_train[:, :cat]
     x_train_cat = x_train[:, cat]
@@ -89,8 +89,6 @@ def normalize_cat(x_train, x_test, cat=22):
 
     x_train_n = np.concatenate((x_train_left_n, np.expand_dims(x_train_cat, 1), x_train_right_n), axis=1)
 
-    print(x_train.shape, x_train_n.shape)
-
     x_test_left = x_test[:, :cat]
     x_test_cat = x_test[:, cat]
     x_test_right = x_test[:, (cat+1):]
@@ -100,7 +98,36 @@ def normalize_cat(x_train, x_test, cat=22):
 
     x_test_n = np.concatenate((x_test_left_n, np.expand_dims(x_test_cat, 1), x_test_right_n), axis=1)
 
-    return x_train_n, x_test_n 
+    return x_train_n, x_test_n
+
+def normalize_all(x_train, x_test):
+
+    x_train_n = (x_train - np.min(x_train, axis=0)) / (np.max(x_train, axis=0) - np.min(x_train, axis=0))
+    x_test_n = (x_test - np.min(x_train, axis=0)) / (np.max(x_train, axis=0) - np.min(x_train, axis=0))
+
+    return x_train_n, x_test_n
+
+def normalize_cat(x_train, x_test, cat=22):
+
+    x_train_left = x_train[:, :cat]
+    x_train_cat = x_train[:, cat]
+    x_train_right = x_train[:, (cat+1):]
+
+    x_train_left_n = (x_train_left - np.min(x_train_left, axis=0)) / (np.max(x_train_left, axis=0) - np.min(x_train_left, axis=0))
+    x_train_right_n = (x_train_right - np.min(x_train_right, axis=0)) / (np.max(x_train_right, axis=0) - np.min(x_train_right, axis=0))
+
+    x_train_n = np.concatenate((x_train_left_n, np.expand_dims(x_train_cat, 1), x_train_right_n), axis=1)
+
+    x_test_left = x_test[:, :cat]
+    x_test_cat = x_test[:, cat]
+    x_test_right = x_test[:, (cat+1):]
+
+    x_test_left_n = (x_test_left - np.min(x_train_left, axis=0)) / (np.max(x_train_left, axis=0) - np.min(x_train_left, axis=0))
+    x_test_right_n = (x_test_right - np.min(x_train_right, axis=0)) / (np.max(x_train_right, axis=0) - np.min(x_train_right, axis=0))
+
+    x_test_n = np.concatenate((x_test_left_n, np.expand_dims(x_test_cat, 1), x_test_right_n), axis=1)
+
+    return x_train_n, x_test_n
 
 def split_data(x, y, ratio, seed=101):
     """split the dataset based on the split ratio."""
@@ -177,7 +204,6 @@ def build_poly(tx, degree):
 
             new_tx = np.c_[new_tx, poly[:, 1:]] #Don't add the 1's
         else:
-            print(tx[:3, i])
             new_tx = np.c_[new_tx, tx[:, i]]
 
     new_tx =  np.delete(new_tx, 0, axis=1)
