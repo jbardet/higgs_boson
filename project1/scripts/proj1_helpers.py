@@ -24,6 +24,7 @@ def load_csv_data(data_path, sub_sample=False):
     return yb, input_data, ids
 
 def one_hot(data) :
+    """Encode the categorical data into one hot vectors and returns the encoded data"""
     cat = data[:,22].astype(int)
     num_cat = np.unique(data[:,22])
     #take column 22 (where it is categorical) and add 4 one-hot columns
@@ -70,6 +71,7 @@ def create_csv_submission(ids, y_pred, name):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
 
 def standardize_all(x_train, x_test):
+    """Standardize all columns in the input data and returns the standardized data"""
 
     centred_x = x_train - np.mean(x_train, axis=0)
     normalized_x = centred_x / np.std(x_train, axis=0)
@@ -77,6 +79,7 @@ def standardize_all(x_train, x_test):
     return normalized_x, normalized_x_test
 
 def standardize_cat(x_train, x_test, cat=22):
+    """Standardize the non-categorical columns in the input data and returns the standardized data"""
 
     x_train_left = x_train[:, :cat]
     x_train_cat = x_train[:, cat]
@@ -99,6 +102,7 @@ def standardize_cat(x_train, x_test, cat=22):
     return x_train_n, x_test_n
 
 def normalize_all(x_train, x_test):
+    """Normalize (between 0 and 1) all columns in the input data and returns the normalize data"""
 
     x_train_n = (x_train - np.min(x_train, axis=0)) / (np.max(x_train, axis=0) - np.min(x_train, axis=0))
     x_test_n = (x_test - np.min(x_train, axis=0)) / (np.max(x_train, axis=0) - np.min(x_train, axis=0))
@@ -106,6 +110,7 @@ def normalize_all(x_train, x_test):
     return x_train_n, x_test_n
 
 def normalize_cat(x_train, x_test, cat=22):
+    """Normalize the non-categorical columns in the input data and returns the normalize data"""
 
     x_train_left = x_train[:, :cat]
     x_train_cat = x_train[:, cat]
