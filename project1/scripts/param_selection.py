@@ -3,6 +3,9 @@ from proj1_helpers import standardize_cat, build_k_indices, compute_mse, modify_
 from implementations import loss_logistic, logistic_regression, reg_logistic_regression, least_squares_GD, least_squares_SGD, least_squares, ridge_regression
 
 def gamma_grid_search(y, tx, gammas, k_fold, degree=1, seed=101):
+    """Performs grid search of gamma parameter using k-fold validation
+       Only for logistic_regression, least_squares_GD, least_squares_SGD
+       OUTPUTS : mean the losses of each method for each gamma"""
 
     k_indices = build_k_indices(y, k_fold, seed)
 
@@ -67,6 +70,9 @@ def gamma_grid_search(y, tx, gammas, k_fold, degree=1, seed=101):
 
 ### PENALTY PARAMETER ###
 def lambda_grid_search(y, tx, lambdas, k_fold, degree=1, seed=101):
+    """Performs grid search of lambda parameter using k-fold validation
+       Only for ridge_regression and reg_logistic_regression
+       OUTPUTS : the mean losses of each method for each lambda"""
 
     k_indices = build_k_indices(y, k_fold, seed)
     gamma = 1e-5 #Change to best gamma found before
@@ -126,6 +132,8 @@ def lambda_grid_search(y, tx, lambdas, k_fold, degree=1, seed=101):
 
 
 def compare_models(y, tx, gammas, lambdas, k_fold, degree=1, seed=101):
+    """Performs k-fold cross validation of the methods using the accuracy metric
+       OUTPUTS : the mean accuracy of each model"""
 
     k_indices = build_k_indices(y, k_fold, seed)
 
@@ -195,6 +203,9 @@ def compare_models(y, tx, gammas, lambdas, k_fold, degree=1, seed=101):
 
 # Grid search for polynomial degree (ridge only)
 def pol_degree_grid_search(y, tx, k_fold, degrees, seed=101):
+    """Performs grid search of polynomial degrees using k-fold validation
+       Only for least_squares and ridge_regression
+       OUTPUTS : the mean accuracy for each polynomial basis"""
 
     k_indices = build_k_indices(y, k_fold, seed)
 
