@@ -7,9 +7,8 @@ def gradient_logistic(tx, y, w):
     """Computes the gradient for Logistic Regression"""
     """INPUTS : vector with data (tx, y), the weights w"""
     """OUTPUTS : the gradient"""
-    pred = sigmoid(tx.dot(w))
-    grad = tx.T.dot(pred - y)
-    return grad
+    h = sigmoid(tx.dot(w))
+    return np.matmul(tx.T, (h - y))
 
 def loss_logistic(tx, y, w):
     """Computes the loss for Logistic Regression"""
@@ -17,9 +16,8 @@ def loss_logistic(tx, y, w):
     """OUTPUTS : the loss"""
     y[y < 0] = 0
     epsilon = 1e-5
-    pred = sigmoid(tx.dot(w))
-    loss = y.T.dot(np.log(pred + epsilon)) + (1 - y).T.dot(np.log(1 - pred + epsilon))
-    return np.squeeze(- loss)
+    h = sigmoid(tx.dot(w))
+    return - (np.matmul(y.T, np.log(h + epsilon)) + np.matmul((1 - y).T, np.log(1 - h + epsilon)))
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """Computes Logistic Regression with Gradient Descent"""
@@ -110,3 +108,4 @@ def ridge_regression(y, tx, lambda_):
     w =  np.matmul(np.linalg.solve((np.matmul((tx.T), tx)+lambda_*2*N*np.identity(tx.shape[1])),(tx.T)), y)
     loss = (1/(2*N))*np.sum(np.square(y-np.dot(tx,w))) + lambda_*np.sum(np.square(w))
     return (w, loss)
+

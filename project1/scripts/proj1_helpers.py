@@ -158,9 +158,8 @@ def build_k_indices(y, k_fold, seed):
 
 def compute_mse(y, tx, w):
     """compute the loss by mse."""
-    e = y - tx.dot(w)
-    mse = e.dot(e) / (2 * len(e))
-    return mse
+    N = len(y)
+    return (1/(2*N))*np.sum(np.square(y-np.dot(tx,w)))
 
 def modify_missing_data(X,missing_data,threshold,train_X):
     nb_features = (np.shape(X))[1]
@@ -195,6 +194,7 @@ def modify_missing_data(X,missing_data,threshold,train_X):
 def build_poly(tx, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
     new_tx = np.zeros((len(tx[:, 0]), 1))
+
     for i in range(tx.shape[1]):
 
         if i <= tx.shape[1]-5:
