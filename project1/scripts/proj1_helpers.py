@@ -26,9 +26,7 @@ def load_csv_data(data_path, sub_sample=False):
 def one_hot(data) :
     cat = data[:,22].astype(int)
     num_cat = np.unique(data[:,22])
-    #print(f'Categorical data : {num_cat}')
     #take column 22 (where it is categorical) and add 4 one-hot columns
-    #rows_added = np.array()
     shape = (cat.size, len(num_cat))
     one_hot = np.zeros(shape)
     one_hot[np.arange(cat.size),cat] = 1
@@ -157,7 +155,7 @@ def build_k_indices(y, k_fold, seed):
     return np.array(k_indices)
 
 def compute_mse(y, tx, w):
-    """compute the loss by mse."""
+    """Compute the MSE loss"""
     N = len(y)
     return (1/(2*N))*np.sum(np.square(y-np.dot(tx,w)))
 
@@ -171,6 +169,8 @@ def modify_missing_data(X,missing_data,threshold,train_X):
     median = np.zeros(nb_features)
     #threshold_removing_feature = 0.70
     for i in range(nb_features):
+        if i != 22 :
+            X[np.where(np.abs(X[:,i])>12*np.std(train_X[:,i],axis=0)), i] = missing_data
         indices_missingdata.append(np.where(X[:,i] == missing_data))
         percentage_missingdata[i] = np.shape(indices_missingdata[i])[1]/nb_samples
         #print(percentage_missingdata[i])# we can see that a lot of features have a percentage of 0.709
@@ -192,16 +192,17 @@ def modify_missing_data(X,missing_data,threshold,train_X):
     return new_X,indices_badfeatures,indices_features
 
 def build_poly(tx, degree):
-    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    """Build a polynomial basis up to degree degree"""
+    
     new_tx = np.zeros((len(tx[:, 0]), 1))
 
     for i in range(tx.shape[1]):
+        if i <= tx.shape[1]-5: # Don't make a polynomial for the one hot vectors
 
-        if i <= tx.shape[1]-5:
             poly = np.ones((len(tx[:, i]), 1))
 
-            for deg in range(1, degree+1):
-                poly = np.c_[poly, np.power(tx[:, i], deg)]
+            for n in range(1, degree+1):
+                poly = np.c_[poly, np.power(tx[:, i], n)]
 
             new_tx = np.c_[new_tx, poly[:, 1:]] #Don't add the 1's
         else:
