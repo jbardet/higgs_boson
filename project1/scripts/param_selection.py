@@ -197,9 +197,14 @@ def compare_models(y, tx, gammas, lambdas, k_fold, degree=1, seed=101):
         accuracy = np.sum(y_pred==y_test) / y_pred.shape[0]
         acc_logreg_reg.append(accuracy)
 
-
-    #return np.mean(acc_logreg, axis=0), np.mean(acc_logreg_reg, axis=0), np.mean(acc_ls_GD, axis=0), np.mean(acc_ls_SGD, axis=0), np.mean(acc_ls, axis=0), 
-    return np.mean(acc_ls_GD, axis=0), np.mean(acc_ls_SGD, axis=0), np.mean(acc_ls, axis=0), np.mean(acc_ridge, axis=0), np.mean(acc_logreg, axis=0), np.mean(acc_logreg_reg, axis=0)
+    ls_GD = [np.mean(acc_ls_GD, axis=0), np.std(acc_ls_GD, axis=0)]
+    ls_SGD = [np.mean(acc_ls_SGD, axis=0), np.std(acc_ls_SGD, axis=0)]
+    ls = [np.mean(acc_ls, axis=0), np.std(acc_ls, axis=0)]
+    ridge = [np.mean(acc_ridge, axis=0), np.std(acc_ridge, axis=0)]
+    logreg = [np.mean(acc_logreg, axis=0), np.std(acc_logreg, axis=0)]
+    logreg_reg = [np.mean(acc_logreg_reg, axis=0), np.std(acc_logreg_reg, axis=0)]
+    
+    return ls_GD, ls_SGD, ls, ridge, logreg, logreg_reg
 
 # Grid search for polynomial degree (ridge only)
 def pol_degree_grid_search(y, tx, k_fold, degrees, seed=101):
