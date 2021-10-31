@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from proj1_helpers import sigmoid
+from scripts.proj1_helpers import sigmoid
 
 def roc(x_test, y_test, weights, thresholds) :
     # threshold as parameter or do we set it inside the definition of the function ?

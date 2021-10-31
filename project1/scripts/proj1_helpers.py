@@ -207,11 +207,11 @@ def build_poly(tx, degree):
             poly = np.ones((len(tx[:, i]), 1))
 
             for n in range(1, degree+1):
-                poly = np.c_[poly, np.power(tx[:, i], n)]
+                poly = np.concatenate((poly, np.expand_dims(np.power(tx[:, i], n), 1)), axis=1)
 
-            new_tx = np.c_[new_tx, poly[:, 1:]] #Don't add the 1's
+            new_tx = np.concatenate((new_tx, poly[:, 1:]), axis=1) #Don't add the 1's
         else:
-            new_tx = np.c_[new_tx, tx[:, i]]
+            new_tx = np.concatenate((new_tx, np.expand_dims(tx[:, i], 1)), axis=1)
 
     new_tx =  np.delete(new_tx, 0, axis=1)
 
