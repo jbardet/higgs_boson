@@ -13,7 +13,7 @@ In the param_selection.py we implemented the functions to select best parameters
 - compare_models : k-fold cross validation 
 - pol_degree_grid_search : grid search of polynomial degrees using k-fold validation
 
-In roc_auc.py there is the computation of the Receiver Operating Characteristic (ROC) curve and its area under the curve (AUC)
+In roc_auc.py there is the computation of the Receiver Operating Characteristic (ROC) curve and its area under the curve (AUC).
 
 In visualization.py there is some functions helping to visualize data and understand it. 
 
