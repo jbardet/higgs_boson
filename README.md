@@ -4,9 +4,8 @@
 
 In this project we tested different Machine Learning methods to classify a dataset from CERN where Higgs Boson are created. Futher informations about techniques used and data analysis can be found in the ML_project1 paper. 
 
-For data analysis we implemented the following functions in the data_analysis.py :
-- normalize
-- covaraince_matrix
+For data analysis we implemented the following function in the data_analysis.py :
+- covariance_matrix : plot of the covariance data between features
 
 In the param_selection.py we implemented the functions to select best parameters : 
 - gamma_grid_search : learning rate
